@@ -1,0 +1,29 @@
+@inherits LayoutComponentBase
+@layout MainLayout
+
+<div class="reports-container">
+    <nav class="reports-sidebar">
+        <h5 class="reports-sidebar-title">Reports</h5>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <NavLink class="nav-link" href="reports/overview" Match="NavLinkMatch.All">
+                    Overview
+                </NavLink>
+            </li>
+            <li class="nav-item">
+                <NavLink class="nav-link" href="reports/sales">
+                    Sales
+                </NavLink>
+            </li>
+            <li class="nav-item">
+                <NavLink class="nav-link" href="reports/inventory">
+                    Inventory
+                </NavLink>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="reports-content">
+        @Body
+    </div>
+</div>
