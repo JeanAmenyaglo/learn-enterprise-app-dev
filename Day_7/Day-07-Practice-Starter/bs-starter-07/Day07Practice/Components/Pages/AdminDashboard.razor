@@ -1,40 +1,11 @@
 @page "/admin"
 @using Fluxor
+@using Day07Practice.Guards
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 @inject IState<UserState> UserState
+@inject NavigationManager Navigation
 
 <h3>Admin Dashboard</h3>
-
-@* ============================================================ *@
-@* PRACTICE 1: Add a route guard to this page.                  *@
-@*                                                               *@
-@* TODO: Inject NavigationManager                                *@
-@* TODO: Override OnInitialized                                  *@
-@* TODO: Check if UserState.Value.Role != "Admin"                *@
-@* TODO: If not admin, redirect to "/access-denied" and return   *@
-@*                                                               *@
-@* Then create an AccessDenied.razor page at "/access-denied"    *@
-@* with a message, a link back to Home, and a link to "/login"   *@
-@* so the visitor can switch roles.                              *@
-@* ============================================================ *@
-
-@* ============================================================ *@
-@* PRACTICE 2: Extract the decision, then test it.               *@
-@*                                                               *@
-@* Your guard works, but the condition lives inside this         *@
-@* component -- a test cannot reach it without rendering the     *@
-@* whole page.                                                   *@
-@*                                                               *@
-@* TODO: Create Guards/AdminGuard.cs -- a public static class    *@
-@* TODO: Give it: public static bool ShouldRedirect(UserState    *@
-@*       state) returning state.Role != "Admin"                  *@
-@* TODO: Replace the condition in OnInitialized with a call to   *@
-@*       AdminGuard.ShouldRedirect(UserState.Value)              *@
-@*                                                               *@
-@* Then write the test -- see Day07Practice.Tests/               *@
-@* AdminGuardTests.cs. Same behaviour, now verifiable without    *@
-@* the UI. This is exactly what Lab 1 grades.                    *@
-@* ============================================================ *@
 
 <div class="alert alert-success">
     <h5>Welcome, Admin!</h5>
@@ -67,3 +38,16 @@
         </div>
     </div>
 </div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        if (AdminGuard.ShouldRedirect(UserState.Value))
+        {
+            Navigation.NavigateTo("/access-denied");
+            return;
+        }
+    }
+}

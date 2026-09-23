@@ -17,10 +17,33 @@ public class CounterReducerTests
         // Assert
         Assert.Equal(6, result.Count);
     }
+[Fact]
+public void ReduceDecrementCounterAction_WithCountOf3_ReturnsCountOf2()
+{
+    // Arrange
+    var initialState = new CounterState { Count = 3 };
+    var action = new DecrementCounterAction();
 
-    // TODO: Write a test for DecrementCounterAction
-    // Pattern: Arrange state with a known Count, Act with the reducer, Assert the new Count
+    // Act
+    var newState = CounterReducers.ReduceDecrementCounterAction(
+        initialState, action);
 
-    // TODO: Write a test for ResetCounterAction
-    // Pattern: Arrange state with a non-zero Count, Act with the reducer, Assert Count is 0
+    // Assert
+    Assert.Equal(2, newState.Count);
+}
+
+[Fact]
+public void ReduceResetCounterAction_WithCountOf10_ReturnsCountOf0()
+{
+    // Arrange
+    var initialState = new CounterState { Count = 10 };
+    var action = new ResetCounterAction();
+
+    // Act
+    var newState = CounterReducers.ReduceResetCounterAction(
+        initialState, action);
+
+    // Assert
+    Assert.Equal(0, newState.Count);
+}
 }
