@@ -36,11 +36,11 @@
     public void Dispose() =>
         RecentlyViewedState.StateChanged -= OnRecentlyViewedChanged;
 
-    // TODO Practice 1: Dispatch HydrateRecentlyViewedRequestAction on first render to
-    // restore the saved Recently Viewed list from localStorage.
-    // Hint: Override OnAfterRenderAsync(bool firstRender) and dispatch only when firstRender
-    // is true. Use OnAfterRenderAsync, not OnInitialized: with prerendering the component is
-    // created twice -- once on the server, where there is no browser and so no JavaScript and
-    // no localStorage -- and OnInitialized runs in that pass too. OnAfterRenderAsync runs only
-    // once the circuit is live, which is the one place JS interop is guaranteed to work.
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Dispatcher.Dispatch(new HydrateRecentlyViewedRequestAction());
+        }
+    }
 }

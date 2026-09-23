@@ -15,6 +15,9 @@ public static class RecentlyViewedReducers
         return state with { Items = updated };
     }
 
-    // TODO (Practice 1): Add a [ReducerMethod] for HydrateRecentlyViewedAction
-    // that returns state with { Items = action.Items }
+        [ReducerMethod]
+    public static RecentlyViewedState ReduceHydrateRecentlyViewedAction(RecentlyViewedState state, HydrateRecentlyViewedAction action)
+    {
+        return state with { Items = action.Items };
+    }
 }

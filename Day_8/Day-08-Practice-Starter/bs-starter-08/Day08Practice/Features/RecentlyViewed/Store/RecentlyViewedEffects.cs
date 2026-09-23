@@ -14,25 +14,27 @@ public class RecentlyViewedEffects(
 {
     private const string RecentlyViewedStorageKey = "recentlyViewed";
 
-    // ============================================================
-    // PRACTICE 1: Build the persistence + hydration pattern for "Recently Viewed".
-    // In the demo you watched the instructor build this same pattern for the CART.
-    // Apply it here, to a different feature, from scratch.
-    //
-    // TODO 1 -- Save on change (WORKED LAUNCH -- the instructor writes this one on screen):
-    //   Add an [EffectMethod] for ViewProductAction that saves the list to localStorage.
-    //   Name the method Handle<ActionName> like the demo's HandleAddToCartAction -- here that
-    //   is HandleViewProductAction (full action name after the Handle prefix).
-    //   Effect Timing Rule: the effect runs AFTER the reducer, so recentState.Value.Items is
-    //   already the updated, de-duplicated, capped-at-5 list -- save that, not action.Item.
-    //
-    // TODO 2 -- Rehydrate on startup (INDEPENDENT -- you continue from here on your own):
-    //   Add an [EffectMethod] for HydrateRecentlyViewedRequestAction that:
-    //     - loads the saved list:
-    //         var items = await localStorage.GetItemAsync<List<RecentlyViewedItem>>(RecentlyViewedStorageKey);
-    //     - if items is not null and items.Count > 0, dispatch new HydrateRecentlyViewedAction(items)
-    //     - wraps the load in try/catch; in catch (corrupt data) call
-    //         await localStorage.RemoveItemAsync(RecentlyViewedStorageKey);
-    //       and let the list start empty
-    // ============================================================
+       [EffectMethod]
+    public async Task HandleViewProductAction(ViewProductAction action, IDispatcher dispatcher)
+    {
+        await localStorage.SetItemAsync(RecentlyViewedStorageKey, recentState.Value.Items);
+    }
+
+    [EffectMethod]
+    public async Task HandleHydrateRecentlyViewedRequestAction(HydrateRecentlyViewedRequestAction action, IDispatcher dispatcher)
+    {
+        try
+        {
+            var items = await localStorage.GetItemAsync<List<RecentlyViewedItem>>(RecentlyViewedStorageKey);
+
+            if (items is not null && items.Count > 0)
+            {
+                dispatcher.Dispatch(new HydrateRecentlyViewedAction(items));
+            }
+        }
+        catch
+        {
+            await localStorage.RemoveItemAsync(RecentlyViewedStorageKey);
+        }
+    }
 }
