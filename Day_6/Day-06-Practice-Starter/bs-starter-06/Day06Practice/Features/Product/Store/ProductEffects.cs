@@ -21,19 +21,16 @@ public record LoadProductFailureAction(string ErrorMessage);
 /// </summary>
 public class ProductEffects(IProductService productService)
 {
-    [EffectMethod]
-    public async Task HandleLoadProductAction(
-        LoadProductAction action, IDispatcher dispatcher)
-    {
-        // TODO (Practice 2): Replace this try/catch with Result<T> checking
-        try
-        {
-            var product = await productService.GetByIdAsync(action.ProductId);
-            dispatcher.Dispatch(new LoadProductSuccessAction(product));
-        }
-        catch (Exception ex)
-        {
-            dispatcher.Dispatch(new LoadProductFailureAction(ex.Message));
-        }
-    }
+   [EffectMethod]
+public async Task HandleLoadProductAction(
+    LoadProductAction action, IDispatcher dispatcher)
+{
+    var result = await productService.GetByIdAsync(action.ProductId);
+
+    if (result.IsSuccess)
+        dispatcher.Dispatch(new LoadProductSuccessAction(result.Value!));
+
+    if (result.IsFailure)
+        dispatcher.Dispatch(new LoadProductFailureAction(string.Join("; ", result.Errors.Select(e => e.Message))));
+}
 }
