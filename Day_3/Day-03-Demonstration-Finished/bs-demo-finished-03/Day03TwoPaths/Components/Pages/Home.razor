@@ -1,0 +1,56 @@
+@* Main menu. Two routes into the same three-step order wizard, differing only in where the
+   order lives between pages. Everything else — the fields, the steps, the layout — is held
+   constant so that the one variable under study is the storage. *@
+@page "/"
+
+<PageTitle>Day 3 — Two Paths</PageTitle>
+
+<h1>Two paths through the same order</h1>
+
+<p class="lead">
+    Both paths collect the same three pieces of information across three steps, and both let you
+    edit the <strong>quantity</strong> on every step. The only difference is where the data lives
+    between pages.
+</p>
+
+<div class="row mt-4">
+    <div class="col-md-6 mb-3">
+        <div class="card h-100 border-danger">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title">Path 1 — No Store</h5>
+                <p class="card-text">
+                    The order is hand-carried from page to page in the <strong>address bar</strong>.
+                    The wizard buttons pass it along. The browser's Back and Forward buttons do not —
+                    they replay an older URL that holds an older copy of the order.
+                </p>
+                <p class="card-text text-muted">
+                    <small>Watch the address bar. The object is sitting in it.</small>
+                </p>
+                <a class="btn btn-danger mt-auto" href="classic/step1">Start Path 1 &rarr;</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <div class="card h-100 border-success">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title">Path 2 — Flux Store</h5>
+                <p class="card-text">
+                    The order lives in a single <strong>store</strong> outside every page. The URLs
+                    carry nothing. Wizard buttons, Back, Forward — every page reads the same one
+                    copy, so there is nothing to drift out of sync.
+                </p>
+                <p class="card-text text-muted">
+                    <small>Watch the address bar here too. It stays empty.</small>
+                </p>
+                <a class="btn btn-success mt-auto" href="flux/step1">Start Path 2 &rarr;</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="alert alert-secondary mt-3">
+    <strong>Try this on both paths:</strong> change the quantity on step 2, then press the
+    browser's <strong>Back</strong> button and the <strong>Forward</strong> button instead of the
+    wizard buttons. One path keeps your edit. The other does not.
+</div>

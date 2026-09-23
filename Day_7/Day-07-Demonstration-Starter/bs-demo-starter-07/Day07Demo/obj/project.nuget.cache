@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "dgSpecHash": "wKBMhSlV9tE=",
+  "success": true,
+  "projectFilePath": "C:\\Enterprise Application Progamming\\Day_7\\Day-07-Demonstration-Starter\\bs-demo-starter-07\\Day07Demo\\Day07Demo.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\jeana\\.nuget\\packages\\bysresults\\1.2.3\\bysresults.1.2.3.nupkg.sha512",
+    "C:\\Users\\jeana\\.nuget\\packages\\fluxor\\6.0.0\\fluxor.6.0.0.nupkg.sha512",
+    "C:\\Users\\jeana\\.nuget\\packages\\fluxor.blazor.web\\6.0.0\\fluxor.blazor.web.6.0.0.nupkg.sha512",
+    "C:\\Users\\jeana\\.nuget\\packages\\microsoft.aspnetcore.app.internal.assets\\10.0.5\\microsoft.aspnetcore.app.internal.assets.10.0.5.nupkg.sha512"
+  ],
+  "logs": []
+}

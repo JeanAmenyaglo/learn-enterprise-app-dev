@@ -1,0 +1,69 @@
+@* Explanation panel for the CLASSIC path. It shows the two copies of the order that exist on
+   this page at the same time: the one the URL handed us, and the one the user has typed. When
+   they disagree, the typed edit is not in any history entry — so Back or Forward will erase it. *@
+
+<div class="card mt-3">
+    <div class="card-header">Where the data actually is</div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <h6>In the URL (the transport)</h6>
+                <p class="mb-1">Name: <code>@Arrived.CustomerName</code></p>
+                <p class="mb-1">City: <code>@Arrived.City</code></p>
+                <p class="mb-1">Quantity: <code>@Arrived.Quantity</code></p>
+                <p class="text-muted"><small>This is what the browser will replay on Back or Forward.</small></p>
+            </div>
+            <div class="col-md-6">
+                <h6>In this component's fields (what you typed)</h6>
+                <p class="mb-1">Name: <code>@Current.CustomerName</code></p>
+                <p class="mb-1">City: <code>@Current.City</code></p>
+                <p class="mb-1">Quantity: <code>@Current.Quantity</code></p>
+                <p class="text-muted"><small>This is destroyed the moment you leave the page.</small></p>
+            </div>
+        </div>
+
+        @if (HasUnsavedEdit)
+        {
+            <div class="alert alert-warning mt-3 mb-0">
+                <strong>These two do not match.</strong> Your edit lives only in this component.
+                Clicking a wizard button writes it into the URL and it survives. Pressing the
+                browser's Back or Forward button does not — the edit is gone.
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-light border mt-3 mb-0">
+                The URL and the page agree. Change the quantity and watch them come apart.
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    /// <summary>
+    /// The order as the query string described it when this page loaded.
+    /// </summary>
+    /// <remarks>
+    /// This is the copy the browser will replay on Back or Forward, because it is the copy
+    /// baked into the history entry.
+    /// </remarks>
+    [Parameter, EditorRequired] public OrderDraft Arrived { get; set; } = new();
+
+    /// <summary>
+    /// The order as the user has since edited it in the page's own fields.
+    /// </summary>
+    /// <remarks>
+    /// This copy is destroyed when the component is, and nothing outside the page can see it.
+    /// </remarks>
+    [Parameter, EditorRequired] public OrderDraft Current { get; set; } = new();
+
+    /// <summary>
+    /// Whether the two copies have diverged — that is, whether an edit is at risk.
+    /// </summary>
+    /// <remarks>
+    /// The comparison is a plain <c>!=</c> because <see cref="OrderDraft"/> is a record, so it
+    /// compares by value rather than by reference. Derived members such as <c>Total</c> are
+    /// computed properties and take no part in that generated equality.
+    /// </remarks>
+    private bool HasUnsavedEdit => Arrived != Current;
+}

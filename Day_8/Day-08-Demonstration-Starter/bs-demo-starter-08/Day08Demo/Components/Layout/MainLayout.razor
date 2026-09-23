@@ -1,0 +1,49 @@
+@inherits LayoutComponentBase
+@implements IDisposable
+@using Fluxor
+@inject IState<CartState> CartState
+@inject IDispatcher Dispatcher
+
+<div class="container mt-4">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 rounded">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Day 8 Demonstration</a>
+            <div class="navbar-nav">
+                <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">Home</NavLink>
+                <NavLink class="nav-link" href="/shop">Shop</NavLink>
+                <NavLink class="nav-link" href="/checkout">
+                    Checkout (@CartState.Value.Items.Count)
+                </NavLink>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        @Body
+    </main>
+</div>
+
+@code {
+    // PRE-BUILT plumbing: a layout inherits LayoutComponentBase (for @Body), so unlike a
+    // FluxorComponent it does NOT auto-subscribe to Fluxor state. We subscribe manually so
+    // the navbar cart count re-renders whenever CartState changes.
+    protected override void OnInitialized() =>
+        CartState.StateChanged += OnCartStateChanged;
+
+    private void OnCartStateChanged(object? sender, EventArgs e) =>
+        InvokeAsync(StateHasChanged);
+
+    public void Dispose() =>
+        CartState.StateChanged -= OnCartStateChanged;
+
+    // ============================================================
+    // DEMONSTRATION Step 7 (CODE LIVE): Wire hydration on startup
+    //
+    // TODO: Override OnAfterRenderAsync(bool firstRender) and, when
+    //       firstRender is true, dispatch a HydrateCartRequestAction.
+    //       Hydration needs JS interop (localStorage), which only exists
+    //       once the circuit is live -- that means OnAfterRenderAsync,
+    //       not OnInitialized. With prerendering, OnInitialized also runs
+    //       on the server pass, where there is no browser at all.
+    // ============================================================
+}

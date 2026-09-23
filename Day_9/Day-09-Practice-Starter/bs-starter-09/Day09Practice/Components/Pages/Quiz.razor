@@ -1,0 +1,37 @@
+@page "/quiz"
+
+<h3>Practice 3: Routing Consolidation Quiz</h3>
+
+<p>Match each URL to the route template that would handle it. Write your answers on paper or discuss with your partner.</p>
+
+<p><strong>Available route templates:</strong></p>
+<ul>
+    <li><code>@@page "/products"</code></li>
+    <li><code>@@page "/products/{'{'}id:int{'}'}"</code></li>
+    <li><code>@@page "/products/{'{'}name{'}'}"</code></li>
+    <li><code>@@page "/docs/{'{'}*slug{'}'}"</code></li>
+    <li><code>@@page "/settings/{'{'}id:int?{'}'}"</code></li>
+    <li><code>@@page "/products/{'{'}id:int{'}'}/reviews"</code></li>
+    <li><code>@@page "/blog/{'{'}*slug{'}'}"</code></li>
+    <li>Fallback route (<code>NotFound.razor</code>, via the middleware)</li>
+</ul>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>URL</th>
+            <th>Your Answer</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>1</td><td><code>/products</code></td><td></td></tr>
+        <tr><td>2</td><td><code>/products/42</code></td><td></td></tr>
+        <tr><td>3</td><td><code>/products/laptop</code></td><td></td></tr>
+        <tr><td>4</td><td><code>/docs/api/v2/auth</code></td><td></td></tr>
+        <tr><td>5</td><td><code>/settings</code> (no id)</td><td></td></tr>
+        <tr><td>6</td><td><code>/nonexistent</code></td><td></td></tr>
+        <tr><td>7</td><td><code>/products/42/reviews</code></td><td></td></tr>
+        <tr><td>8</td><td><code>/blog/2026/02/my-post</code></td><td></td></tr>
+    </tbody>
+</table>

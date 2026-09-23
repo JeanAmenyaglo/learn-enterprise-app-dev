@@ -1,0 +1,67 @@
+@page "/shop"
+@using Fluxor
+@using Day08Practice.Features.RecentlyViewed.Store
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+@inject IState<RecentlyViewedState> RecentlyViewedState
+@inject IDispatcher Dispatcher
+
+<h3>Shop</h3>
+
+<div class="row">
+    @foreach (var product in _products)
+    {
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">@product.Name</h5>
+                    <p class="card-text">@product.Price.ToString("C")</p>
+                    <button class="btn btn-primary"
+                            @onclick="() => ViewProduct(product)">
+                        View
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@* PRE-BUILT display: renders the current Recently Viewed list straight from the store.
+   This page inherits FluxorComponent, so it re-renders automatically when the state changes.
+   Your task is the C# backend that makes this list survive a page refresh. *@
+<div class="mt-4">
+    <h5>Recently Viewed</h5>
+    @if (RecentlyViewedState.Value.Items.Count == 0)
+    {
+        <p class="text-muted">Nothing viewed yet. Click "View" on a product above.</p>
+    }
+    else
+    {
+        <ol class="list-group list-group-numbered">
+            @foreach (var item in RecentlyViewedState.Value.Items)
+            {
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>@item.Name</span>
+                    <span>@item.Price.ToString("C")</span>
+                </li>
+            }
+        </ol>
+    }
+</div>
+
+@code {
+    private readonly List<RecentlyViewedItem> _products =
+    [
+        new(1, "Laptop", 999.99m),
+        new(2, "Mouse", 29.99m),
+        new(3, "Keyboard", 79.99m),
+        new(4, "Monitor", 249.99m),
+        new(5, "Webcam", 89.99m),
+        new(6, "Headset", 129.99m)
+    ];
+
+    // PRE-BUILT: dispatching the domain action is wired for you. ReduceViewProductAction
+    // prepends the product, removes any earlier duplicate, and caps the list at 5.
+    // Persisting that list across refreshes is your task (see RecentlyViewedEffects).
+    private void ViewProduct(RecentlyViewedItem product) =>
+        Dispatcher.Dispatch(new ViewProductAction(product));
+}

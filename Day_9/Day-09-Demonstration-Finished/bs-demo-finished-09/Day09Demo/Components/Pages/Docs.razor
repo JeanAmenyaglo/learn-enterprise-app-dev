@@ -1,0 +1,16 @@
+@* CATCH-ALL ROUTE — the * in {*slug} is what separates this from an ordinary parameter.
+   A single-segment param like {id:int} captures ONE segment (/products/42 → id=42); a
+   catch-all captures the ENTIRE remaining path, slashes and all, into one string
+   (/docs/api/v2/auth → slug = "api/v2/auth"). Reach for it when the path depth isn't known
+   ahead of time — documentation trees, wiki paths, file-browser URLs. *@
+@page "/docs/{*slug}"
+
+<h3>Documentation</h3>
+
+<p>Requested path: <code>@Slug</code></p>
+
+@code {
+    // Nullable on purpose: /docs with nothing after it leaves Slug null (the catch-all matched
+    // zero segments). Any deeper path lands here as a single slash-joined string.
+    [Parameter] public string? Slug { get; set; }
+}

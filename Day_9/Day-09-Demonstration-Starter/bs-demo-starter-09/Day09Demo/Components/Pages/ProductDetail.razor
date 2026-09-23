@@ -1,0 +1,22 @@
+@page "/products/{id:int}"
+
+<h3>Product Detail</h3>
+
+<p>Viewing product ID: <strong>@Id</strong></p>
+<a href="/products" class="btn btn-outline-primary">Back to Products</a>
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    // ================================================================
+    // DEMO STEP 3: The SECOND kind of 404 (CODE LIVE)
+    //
+    // /products/999 satisfies the {id:int} constraint, so routing matched THIS page and the
+    // Step 1 middleware never sees a problem. The URL is fine; the PRODUCT is what's missing.
+    //
+    // TODO: @inject NavigationManager Navigation (at the top of the file)
+    // TODO: Add the Catalog dictionary + a private string? _name field
+    // TODO: Override OnInitialized — if the Id isn't in the Catalog, call Navigation.NotFound()
+    //       That renders the NotFoundPage named in Routes.razor and returns a 404 status.
+    // ================================================================
+}

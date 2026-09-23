@@ -1,0 +1,33 @@
+@page "/products/{id:int}"
+@inject NavigationManager Navigation
+
+<h3>Product Detail</h3>
+
+<p>Viewing product: <strong>@_name</strong> (ID @Id)</p>
+<a href="/products" class="btn btn-outline-primary">Back to Products</a>
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private static readonly Dictionary<int, string> Catalog = new()
+    {
+        [1] = "Laptop",
+        [2] = "Mouse",
+        [3] = "Keyboard",
+        [4] = "Monitor"
+    };
+
+    private string? _name;
+
+    protected override void OnInitialized()
+    {
+        // THE SECOND KIND OF 404 — /products/999 satisfies the {id:int} constraint, so routing
+        // matched THIS page and the middleware in Program.cs never sees a problem. The URL is
+        // fine; the PRODUCT is what is missing. NotFound() is how a page says so: it renders the
+        // NotFoundPage named in Routes.razor and returns a 404 status.
+        if (!Catalog.TryGetValue(Id, out _name))
+        {
+            Navigation.NotFound();
+        }
+    }
+}

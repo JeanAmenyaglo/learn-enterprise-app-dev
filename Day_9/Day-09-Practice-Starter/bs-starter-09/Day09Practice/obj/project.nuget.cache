@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "jEsDEengHhc=",
+  "success": true,
+  "projectFilePath": "C:\\Enterprise Application Progamming\\Day_9\\Day-09-Practice-Starter\\bs-starter-09\\Day09Practice\\Day09Practice.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\jeana\\.nuget\\packages\\microsoft.aspnetcore.app.internal.assets\\10.0.5\\microsoft.aspnetcore.app.internal.assets.10.0.5.nupkg.sha512"
+  ],
+  "logs": []
+}

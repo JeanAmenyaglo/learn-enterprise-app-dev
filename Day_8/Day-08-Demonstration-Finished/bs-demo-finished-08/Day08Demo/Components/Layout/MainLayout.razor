@@ -1,0 +1,65 @@
+@inherits LayoutComponentBase
+@implements IDisposable
+@using Fluxor
+@inject IState<CartState> CartState
+@inject IDispatcher Dispatcher
+
+<div class="container mt-4">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 rounded">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Day 8 Demonstration</a>
+            <div class="navbar-nav">
+                <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">Home</NavLink>
+                <NavLink class="nav-link" href="/shop">Shop</NavLink>
+                <NavLink class="nav-link" href="/checkout">
+                    Checkout (<span data-verify-state="cart-item-count">@CartState.Value.Items.Count</span>)
+                </NavLink>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        @Body
+    </main>
+</div>
+
+@code {
+    // PRE-BUILT plumbing: a layout inherits LayoutComponentBase (for @Body), so unlike a
+    // FluxorComponent it does NOT auto-subscribe to Fluxor state. We subscribe manually so
+    // the navbar cart count re-renders whenever CartState changes (Add/Remove/Clear/hydrate).
+    protected override void OnInitialized() =>
+        CartState.StateChanged += OnCartStateChanged;
+
+    private void OnCartStateChanged(object? sender, EventArgs e) =>
+        InvokeAsync(StateHasChanged);
+
+    public void Dispose() =>
+        CartState.StateChanged -= OnCartStateChanged;
+
+    // Kick off hydration here, not in OnInitialized.
+    //
+    // With prerendering, this component is created TWICE: once on the server for the prerender
+    // pass — where there is no browser, so no JS interop and no localStorage — and again once
+    // the circuit connects. OnInitialized runs in BOTH passes; OnAfterRenderAsync only ever runs
+    // in the live one. The firstRender guard then makes the dispatch fire exactly once.
+    //
+    // This matters because localStorage is a browser API reachable only through JS interop.
+    // Call ILocalStorageService DIRECTLY from OnInitialized and the prerender pass throws
+    // (InvalidOperationException: "JavaScript interop calls cannot be issued at this time").
+    //
+    // Our read does not sit in the component, though — it sits in a Fluxor effect, and the store
+    // is not running during prerender, so a dispatch from OnInitialized is quietly DROPPED
+    // rather than throwing. (Measured: the effect never fires on the prerender pass.) It would
+    // therefore still work, by falling through to the second, circuit-time OnInitialized — but
+    // only by accident, and only as long as that stays true. OnAfterRenderAsync(firstRender) is
+    // the place that is correct on purpose: exactly once, and only when interop is guaranteed.
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Dispatcher.Dispatch(new HydrateCartRequestAction());
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
+}

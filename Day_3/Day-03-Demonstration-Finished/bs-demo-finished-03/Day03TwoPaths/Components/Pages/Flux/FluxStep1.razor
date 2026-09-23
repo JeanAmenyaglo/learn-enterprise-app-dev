@@ -1,0 +1,116 @@
+@* Flux path, step 1 of 3.
+
+   @inherits FluxorComponent subscribes this page to the store and re-renders it whenever the
+   state changes, so there is no manual StateHasChanged anywhere in the file. The page holds no
+   fields of its own: it renders from IState and dispatches actions. *@
+@page "/flux/step1"
+@inherits FluxorComponent
+@inject IState<OrderState> OrderState
+@inject IDispatcher Dispatcher
+@inject NavigationManager Navigation
+
+<PageTitle>Path 2 — Step 1</PageTitle>
+
+<h1>Path 2 (Flux Store): Step 1 of 3 — Customer</h1>
+
+<div class="card mt-3 border-success">
+    <div class="card-body">
+
+        <div class="mb-3">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-control"
+                   value="@OrderState.Value.CustomerName"
+                   @oninput="OnNameChanged" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">City</label>
+            <input type="text" class="form-control"
+                   value="@OrderState.Value.City"
+                   @oninput="OnCityChanged" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label"><strong>Quantity</strong> — editable on every step</label>
+            <input type="number" min="1" class="form-control"
+                   value="@OrderState.Value.Quantity"
+                   @oninput="OnQuantityChanged" />
+        </div>
+
+        <p class="fs-4">Total: <strong>@OrderState.Value.TotalDisplay</strong></p>
+
+        <div class="d-flex gap-2">
+            <button class="btn btn-success" @onclick="ContinueToDelivery">
+                Next: Delivery &rarr;
+            </button>
+            <button class="btn btn-outline-secondary" @onclick="StartOver">
+                Start Over
+            </button>
+        </div>
+
+        <p class="text-muted mt-2">
+            <small>Look at the address bar: <code>/flux/step1</code>, no query string. The wizard
+            buttons carry nothing, because there is nothing to carry.</small>
+        </p>
+    </div>
+</div>
+
+<StoreTransportPanel />
+
+@code {
+    // No local fields anywhere in this file. The page reads the store and dispatches actions,
+    // and that is the entire difference from the matching page on the "No Store" path. With
+    // only one copy of the order in existence, there is nothing for a navigation to lose.
+
+    /// <summary>
+    /// Dispatches the customer name to the store as the user types.
+    /// </summary>
+    /// <param name="e">The change event carrying the new value.</param>
+    private void OnNameChanged(ChangeEventArgs e)
+    {
+        Dispatcher.Dispatch(new SetCustomerNameAction(e.Value?.ToString() ?? string.Empty));
+    }
+
+    /// <summary>
+    /// Dispatches the delivery city to the store as the user types.
+    /// </summary>
+    /// <param name="e">The change event carrying the new value.</param>
+    private void OnCityChanged(ChangeEventArgs e)
+    {
+        Dispatcher.Dispatch(new SetCityAction(e.Value?.ToString() ?? string.Empty));
+    }
+
+    /// <summary>
+    /// Dispatches the quantity to the store as the user types.
+    /// </summary>
+    /// <param name="e">The change event carrying the new value.</param>
+    /// <remarks>
+    /// Non-numeric input is ignored rather than dispatched, so a half-typed value can never
+    /// put the store into a state a reducer would have to defend against.
+    /// </remarks>
+    private void OnQuantityChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out var parsed))
+        {
+            Dispatcher.Dispatch(new SetQuantityAction(parsed));
+        }
+    }
+
+    /// <summary>
+    /// Moves to step 2. Carries nothing — the store is already current.
+    /// </summary>
+    private void ContinueToDelivery()
+    {
+        Navigation.NavigateTo("/flux/step2");
+    }
+
+    /// <summary>
+    /// Returns the order to its initial values by dispatching <see cref="ResetOrderAction"/>.
+    /// </summary>
+    /// <remarks>
+    /// Note that this does not navigate. Resetting the data and moving between pages are
+    /// separate concerns here, which is not true on the "No Store" path.
+    /// </remarks>
+    private void StartOver()
+    {
+        Dispatcher.Dispatch(new ResetOrderAction());
+    }
+}

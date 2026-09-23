@@ -1,0 +1,92 @@
+@* Flux path, step 3 of 3.
+
+   Nothing was passed to this page. It reads the same slice the other two steps read, so it is
+   showing the order as it stands right now rather than as some earlier page described it. *@
+@page "/flux/step3"
+@inherits FluxorComponent
+@inject IState<OrderState> OrderState
+@inject IDispatcher Dispatcher
+@inject NavigationManager Navigation
+
+<PageTitle>Path 2 — Step 3</PageTitle>
+
+<h1>Path 2 (Flux Store): Step 3 of 3 — Review</h1>
+
+<div class="card mt-3 border-success">
+    <div class="card-body">
+
+        <p>
+            Nothing was passed to this page. It reads the same store the other two steps read,
+            so it is showing the order as it stands right now.
+        </p>
+
+        <dl class="row">
+            <dt class="col-sm-3">Customer</dt>
+            <dd class="col-sm-9">@OrderState.Value.CustomerName</dd>
+            <dt class="col-sm-3">Deliver To</dt>
+            <dd class="col-sm-9">@OrderState.Value.City</dd>
+        </dl>
+
+        <div class="mb-3">
+            <label class="form-label"><strong>Quantity</strong> — still editable here</label>
+            <input type="number" min="1" class="form-control"
+                   value="@OrderState.Value.Quantity"
+                   @oninput="OnQuantityChanged" />
+        </div>
+
+        <p class="fs-4">Total: <strong>@OrderState.Value.TotalDisplay</strong></p>
+
+        <div class="d-flex gap-2">
+            <button class="btn btn-outline-success" @onclick="BackToDelivery">
+                &larr; Back: Delivery
+            </button>
+            <button class="btn btn-success" @onclick="StartOver">
+                Start Over
+            </button>
+        </div>
+    </div>
+</div>
+
+<StoreTransportPanel />
+
+@code {
+    // No local fields anywhere in this file. The page reads the store and dispatches actions,
+    // and that is the entire difference from the matching page on the "No Store" path. With
+    // only one copy of the order in existence, there is nothing for a navigation to lose.
+
+    /// <summary>
+    /// Dispatches the quantity to the store as the user types.
+    /// </summary>
+    /// <param name="e">The change event carrying the new value.</param>
+    /// <remarks>
+    /// Non-numeric input is ignored rather than dispatched, so a half-typed value can never
+    /// put the store into a state a reducer would have to defend against.
+    /// </remarks>
+    private void OnQuantityChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out var parsed))
+        {
+            Dispatcher.Dispatch(new SetQuantityAction(parsed));
+        }
+    }
+
+    /// <summary>
+    /// Moves to step 2. Carries nothing — the store is already current.
+    /// </summary>
+    private void BackToDelivery()
+    {
+        Navigation.NavigateTo("/flux/step2");
+    }
+
+    /// <summary>
+    /// Returns the order to its initial values by dispatching <see cref="ResetOrderAction"/>.
+    /// </summary>
+    /// <remarks>
+    /// Note that this does not navigate. Resetting the data and moving between pages are
+    /// separate concerns here, which is not true on the "No Store" path.
+    /// </remarks>
+    private void StartOver()
+    {
+        Dispatcher.Dispatch(new ResetOrderAction());
+    }
+}

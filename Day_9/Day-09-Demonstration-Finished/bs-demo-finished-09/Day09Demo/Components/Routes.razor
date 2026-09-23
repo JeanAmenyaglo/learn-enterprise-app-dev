@@ -1,0 +1,20 @@
+@* FALLBACK ROUTE — <Router> matches the requested URL against every @page route in the
+   assembly, and <Found> renders the page that matched.
+   There is deliberately NO <NotFound> template here. In a Blazor Web App it compiles and
+   never fires — not on the server pass, not on the interactive pass. It is dead code kept
+   only for backward compatibility, which is exactly what makes it a trap.
+   NotFoundPage is what replaces it, and it does TWO jobs:
+     1. The interactive pass of a BAD URL. The server pass already rendered NotFound.razor
+        (UseStatusCodePagesWithReExecute in Program.cs). But once the Blazor circuit connects,
+        the router re-runs against the URL the user actually typed (/nonexistent) — which still
+        matches nothing. NotFoundPage is what it renders. Without it, Blazor's built-in bare
+        "Not found" text overwrites the styled page a moment after it appears.
+     2. NavigationManager.NotFound() — a URL that DID match a route, but whose data does not
+        exist (see ProductDetail.razor, /products/999).
+   The middleware and NotFoundPage are BOTH required for a bad URL. See blazor-gotchas.md 6.5. *@
+<Router AppAssembly="typeof(Program).Assembly" NotFoundPage="typeof(Pages.NotFound)">
+    <Found Context="routeData">
+        <RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)" />
+        <FocusOnNavigate RouteData="routeData" Selector="h1" />
+    </Found>
+</Router>

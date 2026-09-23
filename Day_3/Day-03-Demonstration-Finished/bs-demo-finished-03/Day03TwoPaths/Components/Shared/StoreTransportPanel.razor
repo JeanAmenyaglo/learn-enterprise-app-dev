@@ -1,0 +1,26 @@
+@* Explanation panel for the FLUX path. There is only ever ONE copy of the order, so there is
+   no "typed vs stored" split to show — every edit reached the store the moment it was made. *@
+@inherits FluxorComponent
+@inject IState<OrderState> OrderState
+
+<div class="card mt-3">
+    <div class="card-header">Where the data actually is</div>
+    <div class="card-body">
+        <h6>In the store — one copy, read by every page</h6>
+        <p class="mb-1">Name: <code>@OrderState.Value.CustomerName</code></p>
+        <p class="mb-1">City: <code>@OrderState.Value.City</code></p>
+        <p class="mb-1">Quantity: <code>@OrderState.Value.Quantity</code></p>
+
+        <div class="alert alert-light border mt-3">
+            The URL carries nothing. Back and Forward move you between pages, but there is no
+            older copy of the order for them to replay — every page reads this same state.
+        </div>
+
+        <div class="alert alert-warning mb-0">
+            <strong>One limit worth knowing.</strong> This store lives in server memory for your
+            current connection. Back and Forward are safe, but pressing <strong>F5</strong> or
+            reopening the app starts a new connection and the store resets to its initial values.
+            Surviving a reload needs storage that outlives the connection — that is a later topic.
+        </div>
+    </div>
+</div>

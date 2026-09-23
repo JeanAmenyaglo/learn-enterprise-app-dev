@@ -1,0 +1,8 @@
+<Router AppAssembly="typeof(Program).Assembly">
+    <Found Context="routeData">
+        <RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)" />
+        <FocusOnNavigate RouteData="routeData" Selector="h1" />
+    </Found>
+    @* No <NotFound> template — same reason as the Day 2 demo. In a Blazor Web App the server
+       resolves the URL before <Router> runs, so a <NotFound> block would compile and never fire. *@
+</Router>

@@ -1,0 +1,24 @@
+@page "/products"
+
+<h3>Products</h3>
+
+<ul class="list-group">
+    @foreach (var product in _products)
+    {
+        <li class="list-group-item">
+            <a href="/products/@product.Id">@product.Name</a> -- @product.Price.ToString("C")
+        </li>
+    }
+</ul>
+
+@code {
+    private readonly List<ProductInfo> _products =
+    [
+        new(1, "Laptop", 999.99m),
+        new(2, "Mouse", 29.99m),
+        new(3, "Keyboard", 79.99m),
+        new(4, "Monitor", 349.99m)
+    ];
+
+    private record ProductInfo(int Id, string Name, decimal Price);
+}

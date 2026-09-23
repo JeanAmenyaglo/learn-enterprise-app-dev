@@ -1,0 +1,112 @@
+@* Flux path, step 2 of 3.
+
+   The same page in the sequence as ClassicStep2, and the direct comparison. Change the quantity,
+   then press browser Back and Forward: both steps show the new value, because both are reading
+   the one copy in the store rather than replaying a URL. *@
+@page "/flux/step2"
+@inherits FluxorComponent
+@inject IState<OrderState> OrderState
+@inject IDispatcher Dispatcher
+@inject NavigationManager Navigation
+
+<PageTitle>Path 2 — Step 2</PageTitle>
+
+<h1>Path 2 (Flux Store): Step 2 of 3 — Delivery</h1>
+
+<div class="card mt-3 border-success">
+    <div class="card-body">
+
+        <div class="mb-3">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-control"
+                   value="@OrderState.Value.CustomerName"
+                   @oninput="OnNameChanged" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Deliver To (City)</label>
+            <input type="text" class="form-control"
+                   value="@OrderState.Value.City"
+                   @oninput="OnCityChanged" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label"><strong>Quantity</strong> — editable on every step</label>
+            <input type="number" min="1" class="form-control"
+                   value="@OrderState.Value.Quantity"
+                   @oninput="OnQuantityChanged" />
+        </div>
+
+        <p class="fs-4">Total: <strong>@OrderState.Value.TotalDisplay</strong></p>
+
+        <div class="d-flex gap-2">
+            <button class="btn btn-outline-success" @onclick="BackToCustomer">
+                &larr; Back: Customer
+            </button>
+            <button class="btn btn-success" @onclick="ContinueToReview">
+                Next: Review &rarr;
+            </button>
+        </div>
+
+        <p class="text-muted mt-2">
+            <small>Change the quantity here, then use the browser's Back and Forward buttons
+            instead of these. The number does not move.</small>
+        </p>
+    </div>
+</div>
+
+<StoreTransportPanel />
+
+@code {
+    // No local fields anywhere in this file. The page reads the store and dispatches actions,
+    // and that is the entire difference from the matching page on the "No Store" path. With
+    // only one copy of the order in existence, there is nothing for a navigation to lose.
+
+    /// <summary>
+    /// Dispatches the customer name to the store as the user types.
+    /// </summary>
+    /// <param name="e">The change event carrying the new value.</param>
+    private void OnNameChanged(ChangeEventArgs e)
+    {
+        Dispatcher.Dispatch(new SetCustomerNameAction(e.Value?.ToString() ?? string.Empty));
+    }
+
+    /// <summary>
+    /// Dispatches the delivery city to the store as the user types.
+    /// </summary>
+    /// <param name="e">The change event carrying the new value.</param>
+    private void OnCityChanged(ChangeEventArgs e)
+    {
+        Dispatcher.Dispatch(new SetCityAction(e.Value?.ToString() ?? string.Empty));
+    }
+
+    /// <summary>
+    /// Dispatches the quantity to the store as the user types.
+    /// </summary>
+    /// <param name="e">The change event carrying the new value.</param>
+    /// <remarks>
+    /// Non-numeric input is ignored rather than dispatched, so a half-typed value can never
+    /// put the store into a state a reducer would have to defend against.
+    /// </remarks>
+    private void OnQuantityChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out var parsed))
+        {
+            Dispatcher.Dispatch(new SetQuantityAction(parsed));
+        }
+    }
+
+    /// <summary>
+    /// Moves to step 1. Carries nothing — the store is already current.
+    /// </summary>
+    private void BackToCustomer()
+    {
+        Navigation.NavigateTo("/flux/step1");
+    }
+
+    /// <summary>
+    /// Moves to step 3. Carries nothing — the store is already current.
+    /// </summary>
+    private void ContinueToReview()
+    {
+        Navigation.NavigateTo("/flux/step3");
+    }
+}

@@ -1,0 +1,27 @@
+@* ================================================================ *@
+@* DEMO STEP 1 (second half): finish the fallback route (CODE LIVE) *@
+@*                                                                   *@
+@* Note there is NO <NotFound> template in this router, and none is  *@
+@* coming. In a Blazor Web App it compiles and never fires — not on  *@
+@* the server pass, not on the interactive pass. Dead code, kept for *@
+@* backward compatibility only. That is what makes it a trap.        *@
+@*                                                                   *@
+@* TODO: Add NotFoundPage="typeof(Pages.NotFound)" to <Router>       *@
+@*       below. It does TWO jobs:                                    *@
+@*                                                                   *@
+@*   1. BAD URL (/nonexistent). The middleware from Step 1 fixes the *@
+@*      SERVER pass. But the Blazor circuit then connects and re-runs *@
+@*      this router against the URL the user actually typed, which    *@
+@*      still matches nothing. NotFoundPage is what it renders. Leave *@
+@*      it out and Blazor's bare "Not found" overwrites your styled   *@
+@*      page a moment after it appears — the classic flash-then-gone. *@
+@*                                                                   *@
+@*   2. NavigationManager.NotFound() — a URL that DID match, but      *@
+@*      whose data is missing (Step 3, ProductDetail.razor).          *@
+@* ================================================================ *@
+<Router AppAssembly="typeof(Program).Assembly">
+    <Found Context="routeData">
+        <RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)" />
+        <FocusOnNavigate RouteData="routeData" Selector="h1" />
+    </Found>
+</Router>

@@ -1,0 +1,35 @@
+@* ============================================================ *@
+@* PRACTICE 2: Catch-all route for color pages                   *@
+@*                                                               *@
+@* The dictionary in the @code block below is PRE-BUILT.         *@
+@* Building a dictionary is not the exercise. The ROUTING is.    *@
+@*                                                               *@
+@* TODO 1: Add the @page directive with a catch-all parameter.   *@
+@* TODO 2: Add a [Parameter] property to capture the slug. Make  *@
+@*         it string? — a catch-all also matches ZERO segments,  *@
+@*         so the bare /colors reaches this page with a null     *@
+@*         slug. One directive covers both.                      *@
+@* TODO 3: Add the three display branches:                       *@
+@*         - no slug, or slug "index" -> list every known color  *@
+@*         - slug IS a known color    -> name + hex + swatch     *@
+@*         - slug is NOT known        -> "Color Not Found", and  *@
+@*                                       echo the captured slug  *@
+@* ============================================================ *@
+
+<h3>Colors</h3>
+<p>
+    This page knows about @_knownColors.Count colors, but it has no route yet.
+    Add the catch-all route so <code>/colors/red</code> reaches it.
+</p>
+
+@code {
+    // PRE-BUILT — not part of the exercise.
+    // This dictionary stands in for a database lookup. A real app would query a table
+    // of colors here. The KEY is the slug taken from the URL; the VALUE is the hex code.
+    private readonly Dictionary<string, string> _knownColors = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["red"] = "#FF0000",
+        ["green"] = "#00FF00",
+        ["blue"] = "#0000FF"
+    };
+}

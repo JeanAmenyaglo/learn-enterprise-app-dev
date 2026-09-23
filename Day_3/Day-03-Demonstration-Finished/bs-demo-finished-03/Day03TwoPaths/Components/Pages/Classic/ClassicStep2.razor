@@ -1,0 +1,131 @@
+@* "No Store" path, step 2 of 3.
+
+   The page where the demo lands. Change the quantity here, then use the browser's Back and
+   Forward buttons instead of the wizard buttons: Back shows step 1 with the original value,
+   and Forward returns here with the value the URL carried, not the one that was typed. *@
+@page "/classic/step2"
+@inject NavigationManager Navigation
+
+<PageTitle>Path 1 — Step 2</PageTitle>
+
+<h1>Path 1 (No Store): Step 2 of 3 — Delivery</h1>
+
+<div class="card mt-3 border-danger">
+    <div class="card-body">
+
+        <div class="mb-3">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-control" @bind="customerName" @bind:event="oninput" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Deliver To (City)</label>
+            <input type="text" class="form-control" @bind="city" @bind:event="oninput" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label"><strong>Quantity</strong> — editable on every step</label>
+            <input type="number" min="1" class="form-control" @bind="quantity" @bind:event="oninput" />
+        </div>
+
+        <p class="fs-4">Total: <strong>@Current.TotalDisplay</strong></p>
+
+        <div class="d-flex gap-2">
+            <button class="btn btn-outline-danger" @onclick="BackToCustomer">
+                &larr; Back: Customer
+            </button>
+            <button class="btn btn-danger" @onclick="ContinueToReview">
+                Next: Review &rarr;
+            </button>
+        </div>
+
+        <p class="text-muted mt-2">
+            <small>Both wizard buttons carry the order. Neither uses <code>replace: true</code> —
+            every move leaves a history entry so the browser's Back and Forward buttons have
+            something to replay.</small>
+        </p>
+    </div>
+</div>
+
+<UrlTransportPanel Arrived="arrived" Current="Current" />
+
+@code {
+    // ---- What the URL handed us -------------------------------------------------
+    // These are the only things this page received. Note that they are three loose
+    // values, not an object: the previous page had to flatten the order to send it.
+
+    /// <summary>Customer name supplied by the query string, if the URL carried one.</summary>
+    [Parameter, SupplyParameterFromQuery(Name = "name")] public string? NameFromUrl { get; set; }
+
+    /// <summary>Delivery city supplied by the query string, if the URL carried one.</summary>
+    [Parameter, SupplyParameterFromQuery(Name = "city")] public string? CityFromUrl { get; set; }
+
+    /// <summary>Quantity supplied by the query string, if the URL carried one.</summary>
+    [Parameter, SupplyParameterFromQuery(Name = "qty")] public int? QtyFromUrl { get; set; }
+
+    // ---- The two copies this page holds -----------------------------------------
+    // `arrived` is the order as the URL described it. The three fields below are the
+    // order as the user has since edited it. Keeping them apart is what lets the
+    // explanation panel show the moment they diverge.
+
+    private OrderDraft arrived = new();
+
+    private string customerName = string.Empty;
+    private string city = string.Empty;
+    private int quantity = 1;
+
+    /// <summary>
+    /// Re-reads the query string and discards any unsaved edits.
+    /// </summary>
+    /// <remarks>
+    /// This runs on every navigation into the page — including a browser Back or Forward,
+    /// which is exactly the behaviour the demo is built to expose. The URL wins, so
+    /// whatever the user typed and did not pass through a wizard button is gone.
+    /// </remarks>
+    protected override void OnParametersSet()
+    {
+        arrived = OrderDraft.FromQuery(NameFromUrl, CityFromUrl, QtyFromUrl);
+
+        customerName = arrived.CustomerName;
+        city = arrived.City;
+        quantity = arrived.Quantity;
+    }
+
+    /// <summary>
+    /// The order as it stands in this component's fields right now.
+    /// </summary>
+    /// <remarks>
+    /// It exists only in memory, and only until this component is destroyed. Nothing
+    /// outside this page can see it until a wizard button writes it into a URL.
+    /// </remarks>
+    private OrderDraft Current => new()
+    {
+        CustomerName = customerName,
+        City = city,
+        Quantity = quantity
+    };
+
+    /// <summary>
+    /// Moves back one step, carrying the current edits in the query string.
+    /// </summary>
+    /// <remarks>
+    /// Deliberately no <c>replace: true</c>, unlike the Day 2 wizard. Here every move
+    /// should leave a history entry, so the browser's Back and Forward buttons have
+    /// something to replay and the contrast with these buttons is visible.
+    /// </remarks>
+    private void BackToCustomer()
+    {
+        Navigation.NavigateTo("/classic/step1" + Current.ToQueryString());
+    }
+
+    /// <summary>
+    /// Advances one step, carrying the current edits in the query string.
+    /// </summary>
+    /// <remarks>
+    /// This is the only code on the page that writes the user's edits anywhere
+    /// durable. "Passing the object" on this path means calling
+    /// <see cref="OrderDraft.ToQueryString"/> and appending the result to the route.
+    /// </remarks>
+    private void ContinueToReview()
+    {
+        Navigation.NavigateTo("/classic/step3" + Current.ToQueryString());
+    }
+}

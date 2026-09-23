@@ -1,0 +1,18 @@
+@* FALLBACK PAGE — this is an ordinary routed page, NOT a <Router> template. Two different
+   things send a user here:
+     1. ASP.NET Core routing finds no endpoint for the URL (/nonexistent). The
+        UseStatusCodePagesWithReExecute middleware in Program.cs re-runs the pipeline against
+        /not-found, keeping the 404 status code the browser should see.
+     2. A page calls NavigationManager.NotFound() because the URL was valid but the thing it
+        asked for was not (ProductDetail.razor, /products/999).
+   Because it is a normal page, it picks up MainLayout from DefaultLayout — the navbar comes
+   along for free. No <LayoutView> wrapper needed. *@
+@page "/not-found"
+
+<PageTitle>Page Not Found</PageTitle>
+
+<div class="alert alert-warning mt-4">
+    <h3>Page Not Found</h3>
+    <p>The page you requested does not exist.</p>
+    <a href="/" class="btn btn-primary">Go Home</a>
+</div>

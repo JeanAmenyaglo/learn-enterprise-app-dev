@@ -1,0 +1,46 @@
+@inherits LayoutComponentBase
+@implements IDisposable
+@using Fluxor
+@using Day08Practice.Features.RecentlyViewed.Store
+@inject IState<RecentlyViewedState> RecentlyViewedState
+@inject IDispatcher Dispatcher
+
+<div class="container mt-4">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 rounded">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Day 8 Practice</a>
+            <div class="navbar-nav">
+                <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">Home</NavLink>
+                <NavLink class="nav-link" href="/shop">
+                    Shop (Recently viewed: @RecentlyViewedState.Value.Items.Count)
+                </NavLink>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        @Body
+    </main>
+</div>
+
+@code {
+    // PRE-BUILT plumbing: a layout inherits LayoutComponentBase (for @Body), so unlike a
+    // FluxorComponent it does NOT auto-subscribe to Fluxor state. We subscribe manually so
+    // the navbar "Recently viewed" count re-renders whenever the state changes (view + hydrate).
+    protected override void OnInitialized() =>
+        RecentlyViewedState.StateChanged += OnRecentlyViewedChanged;
+
+    private void OnRecentlyViewedChanged(object? sender, EventArgs e) =>
+        InvokeAsync(StateHasChanged);
+
+    public void Dispose() =>
+        RecentlyViewedState.StateChanged -= OnRecentlyViewedChanged;
+
+    // TODO Practice 1: Dispatch HydrateRecentlyViewedRequestAction on first render to
+    // restore the saved Recently Viewed list from localStorage.
+    // Hint: Override OnAfterRenderAsync(bool firstRender) and dispatch only when firstRender
+    // is true. Use OnAfterRenderAsync, not OnInitialized: with prerendering the component is
+    // created twice -- once on the server, where there is no browser and so no JavaScript and
+    // no localStorage -- and OnInitialized runs in that pass too. OnAfterRenderAsync runs only
+    // once the circuit is live, which is the one place JS interop is guaranteed to work.
+}

@@ -1,0 +1,125 @@
+@* "No Store" path, step 1 of 3.
+
+   The order is hand-carried in the query string. Read the @code block from the top: the page
+   receives three loose values, rebuilds an OrderDraft from them, copies them into local fields
+   for editing, and only writes them back out when a wizard button is clicked. *@
+@page "/classic/step1"
+@inject NavigationManager Navigation
+
+<PageTitle>Path 1 — Step 1</PageTitle>
+
+<h1>Path 1 (No Store): Step 1 of 3 — Customer</h1>
+
+<div class="card mt-3 border-danger">
+    <div class="card-body">
+
+        <div class="mb-3">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-control" @bind="customerName" @bind:event="oninput" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">City</label>
+            <input type="text" class="form-control" @bind="city" @bind:event="oninput" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label"><strong>Quantity</strong> — editable on every step</label>
+            <input type="number" min="1" class="form-control" @bind="quantity" @bind:event="oninput" />
+        </div>
+
+        <p class="fs-4">Total: <strong>@Current.TotalDisplay</strong></p>
+
+        <div class="d-flex gap-2">
+            <button class="btn btn-danger" @onclick="ContinueToDelivery">
+                Next: Delivery &rarr;
+            </button>
+            <button class="btn btn-outline-secondary" @onclick="StartOver">
+                Start Over
+            </button>
+        </div>
+    </div>
+</div>
+
+<UrlTransportPanel Arrived="arrived" Current="Current" />
+
+@code {
+    // ---- What the URL handed us -------------------------------------------------
+    // These are the only things this page received. Note that they are three loose
+    // values, not an object: the previous page had to flatten the order to send it.
+
+    /// <summary>Customer name supplied by the query string, if the URL carried one.</summary>
+    [Parameter, SupplyParameterFromQuery(Name = "name")] public string? NameFromUrl { get; set; }
+
+    /// <summary>Delivery city supplied by the query string, if the URL carried one.</summary>
+    [Parameter, SupplyParameterFromQuery(Name = "city")] public string? CityFromUrl { get; set; }
+
+    /// <summary>Quantity supplied by the query string, if the URL carried one.</summary>
+    [Parameter, SupplyParameterFromQuery(Name = "qty")] public int? QtyFromUrl { get; set; }
+
+    // ---- The two copies this page holds -----------------------------------------
+    // `arrived` is the order as the URL described it. The three fields below are the
+    // order as the user has since edited it. Keeping them apart is what lets the
+    // explanation panel show the moment they diverge.
+
+    private OrderDraft arrived = new();
+
+    private string customerName = string.Empty;
+    private string city = string.Empty;
+    private int quantity = 1;
+
+    /// <summary>
+    /// Re-reads the query string and discards any unsaved edits.
+    /// </summary>
+    /// <remarks>
+    /// This runs on every navigation into the page — including a browser Back or Forward,
+    /// which is exactly the behaviour the demo is built to expose. The URL wins, so
+    /// whatever the user typed and did not pass through a wizard button is gone.
+    /// </remarks>
+    protected override void OnParametersSet()
+    {
+        arrived = OrderDraft.FromQuery(NameFromUrl, CityFromUrl, QtyFromUrl);
+
+        customerName = arrived.CustomerName;
+        city = arrived.City;
+        quantity = arrived.Quantity;
+    }
+
+    /// <summary>
+    /// The order as it stands in this component's fields right now.
+    /// </summary>
+    /// <remarks>
+    /// It exists only in memory, and only until this component is destroyed. Nothing
+    /// outside this page can see it until a wizard button writes it into a URL.
+    /// </remarks>
+    private OrderDraft Current => new()
+    {
+        CustomerName = customerName,
+        City = city,
+        Quantity = quantity
+    };
+
+    /// <summary>
+    /// Advances one step, carrying the current edits in the query string.
+    /// </summary>
+    /// <remarks>
+    /// This is the only code on the page that writes the user's edits anywhere
+    /// durable. "Passing the object" on this path means calling
+    /// <see cref="OrderDraft.ToQueryString"/> and appending the result to the route.
+    /// </remarks>
+    private void ContinueToDelivery()
+    {
+        Navigation.NavigateTo("/classic/step2" + Current.ToQueryString());
+    }
+
+    /// <summary>
+    /// Returns to step 1 with a bare URL, clearing the order.
+    /// </summary>
+    /// <remarks>
+    /// No query string means nothing to rebuild from, so every field falls back to
+    /// its default. On this path, clearing the data and losing the data are the
+    /// same operation.
+    /// </remarks>
+    private void StartOver()
+    {
+        Navigation.NavigateTo("/classic/step1");
+    }
+}

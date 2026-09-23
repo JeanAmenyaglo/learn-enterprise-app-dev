@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "Qql/GkVC4Sk=",
+  "success": true,
+  "projectFilePath": "C:\\Enterprise Application Progamming\\Day_9\\Day-09-Demonstration-Finished\\bs-demo-finished-09\\Day09Demo\\Day09Demo.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\jeana\\.nuget\\packages\\microsoft.aspnetcore.app.internal.assets\\10.0.5\\microsoft.aspnetcore.app.internal.assets.10.0.5.nupkg.sha512"
+  ],
+  "logs": []
+}
