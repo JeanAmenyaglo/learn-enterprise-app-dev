@@ -1,0 +1,29 @@
+@inherits LayoutComponentBase
+@layout MainLayout
+
+<div class="admin-container">
+    <nav class="admin-sidebar">
+        <h5 class="admin-sidebar-title">Admin Panel</h5>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <NavLink class="nav-link" href="admin/dashboard" Match="NavLinkMatch.All">
+                    Dashboard
+                </NavLink>
+            </li>
+            <li class="nav-item">
+                <NavLink class="nav-link" href="admin/users">
+                    Users
+                </NavLink>
+            </li>
+            <li class="nav-item">
+                <NavLink class="nav-link" href="admin/settings">
+                    Settings
+                </NavLink>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="admin-content">
+        @Body
+    </div>
+</div>
