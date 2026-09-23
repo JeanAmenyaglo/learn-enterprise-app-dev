@@ -1,10 +1,9 @@
-@* TODO (Practice 3, Step 5): Add the @page directive for "/projects/{projectId:int}/tasks". *@
+@page "/projects/{ProjectId:int}/tasks"
 
 <PageTitle>Project Tasks</PageTitle>
 
-<h1>Project ??? -- Tasks</h1>
-
-<p>Task list for project <strong>???</strong>.</p>
+<h1>Project @ProjectId -- Tasks</h1>
+<p>Task list for project <strong>@ProjectId</strong>.</p>
 
 <table class="table table-striped mt-3">
     <thead>
@@ -34,5 +33,6 @@
 </table>
 
 @code {
-    @* TODO (Practice 3, Step 6): Add a [Parameter] property for ProjectId (int). *@
+    [Parameter]
+    public int ProjectId { get; set; }
 }

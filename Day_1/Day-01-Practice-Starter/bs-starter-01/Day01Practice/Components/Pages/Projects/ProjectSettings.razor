@@ -1,8 +1,9 @@
-@* TODO (Practice 3, Step 7): Add the @page directive for "/projects/{projectId:int}/settings". *@
-
+@page "/projects/{ProjectId:int}/settings"
 <PageTitle>Project Settings</PageTitle>
 
-<h1>Project ??? -- Settings</h1>
+<h1>Project @ProjectId -- Settings</h1>
+...
+<input type="text" class="form-control" value="Project @ProjectId" readonly />
 
 <div class="card mt-3">
     <div class="card-body">
@@ -22,5 +23,6 @@
 </div>
 
 @code {
-    @* TODO (Practice 3, Step 8): Add a [Parameter] property for ProjectId (int). *@
+    [Parameter]
+public int ProjectId { get; set; }
 }
