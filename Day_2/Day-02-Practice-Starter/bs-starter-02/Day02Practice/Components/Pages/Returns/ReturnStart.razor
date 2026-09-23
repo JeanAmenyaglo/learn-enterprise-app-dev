@@ -1,0 +1,31 @@
+@page "/returns/start/{OrderId:int:min(1)}"
+@inject NavigationManager Navigation
+
+<PageTitle>Returns - Start</PageTitle>
+
+<h1>Product Return</h1>
+
+<div class="card mt-3">
+    <div class="card-body">
+        <h5 class="card-title">Start a Return for Order #@OrderId</h5>
+
+        <p class="card-text">
+            We're sorry to hear you'd like to return an item from this order.
+            Click below to begin the return process.
+        </p>
+
+        <button class="btn btn-primary" @onclick="StartReturn">
+            Start Return Process &rarr;
+        </button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int OrderId { get; set; }
+
+    private void StartReturn()
+    {
+        Navigation.NavigateTo($"/returns/reason/{OrderId}");
+    }
+}

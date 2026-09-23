@@ -1,0 +1,77 @@
+@page "/survey/{Page:int:range(1,3)}"
+@inject NavigationManager Navigation
+
+<PageTitle>Survey - Page @Page</PageTitle>
+<h1>Survey</h1>
+
+<div class="card mt-3">
+    <div class="card-body">
+        <h5 class="card-title">Question @Page of 3</h5>
+
+        @* Simulated survey questions -- content changes based on page number *@
+        <div class="mb-3">
+            <label class="form-label">
+                @if (Page == 1)
+                {
+                    <text>How satisfied are you with the course?</text>
+                }
+                else if (Page == 2)
+                {
+                    <text>How would you rate the instructor?</text>
+                }
+                else
+                {
+                    <text>Would you recommend this course to others?</text>
+                }
+            </label>
+            <select class="form-select">
+                <option>Very Satisfied</option>
+                <option>Satisfied</option>
+                <option>Neutral</option>
+                <option>Dissatisfied</option>
+            </select>
+        </div>
+
+        <div class="d-flex gap-2">
+            @if (Page > 1)
+            {
+                <button class="btn btn-outline-secondary" @onclick="GoBack">
+                    &larr; Back
+                </button>
+            }
+
+            @if (Page < 3)
+            {
+                <button class="btn btn-primary" @onclick="GoNext">
+                    Next &rarr;
+                </button>
+            }
+            else
+            {
+                <button class="btn btn-success" @onclick="Finish">
+                    Finish Survey
+                </button>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int Page { get; set; } = 1;
+
+    private void GoNext()
+    {
+        Navigation.NavigateTo($"/survey/{Page + 1}");
+    }
+
+    private void GoBack()
+    {
+        Navigation.NavigateTo($"/survey/{Page - 1}", replace: true);
+    }
+
+    private void Finish()
+    {
+        Navigation.NavigateTo("/survey/complete");
+    }
+}
