@@ -1,28 +1,31 @@
-@* ============================================================ *@
-@* PRACTICE 2: Catch-all route for color pages                   *@
-@*                                                               *@
-@* The dictionary in the @code block below is PRE-BUILT.         *@
-@* Building a dictionary is not the exercise. The ROUTING is.    *@
-@*                                                               *@
-@* TODO 1: Add the @page directive with a catch-all parameter.   *@
-@* TODO 2: Add a [Parameter] property to capture the slug. Make  *@
-@*         it string? — a catch-all also matches ZERO segments,  *@
-@*         so the bare /colors reaches this page with a null     *@
-@*         slug. One directive covers both.                      *@
-@* TODO 3: Add the three display branches:                       *@
-@*         - no slug, or slug "index" -> list every known color  *@
-@*         - slug IS a known color    -> name + hex + swatch     *@
-@*         - slug is NOT known        -> "Color Not Found", and  *@
-@*                                       echo the captured slug  *@
-@* ============================================================ *@
+@page "/colors/{*Slug}"
 
-<h3>Colors</h3>
-<p>
-    This page knows about @_knownColors.Count colors, but it has no route yet.
-    Add the catch-all route so <code>/colors/red</code> reaches it.
-</p>
+@if (string.IsNullOrEmpty(Slug) || Slug.Equals("index", StringComparison.OrdinalIgnoreCase))
+{
+    <h3>Colors</h3>
+    <ul>
+        @foreach (var color in _knownColors.Keys)
+        {
+            <li><a href="/colors/@color">@color</a></li>
+        }
+    </ul>
+}
+else if (_knownColors.TryGetValue(Slug, out var hex))
+{
+    <h3>@Slug</h3>
+    <p>Hex: @hex</p>
+    <div style="width: 100px; height: 100px; background-color: @hex;"></div>
+}
+else
+{
+    <h3>Color Not Found</h3>
+    <p>No color matches: @Slug</p>
+}
 
 @code {
+    [Parameter]
+    public string? Slug { get; set; }
+
     // PRE-BUILT — not part of the exercise.
     // This dictionary stands in for a database lookup. A real app would query a table
     // of colors here. The KEY is the slug taken from the URL; the VALUE is the hex code.

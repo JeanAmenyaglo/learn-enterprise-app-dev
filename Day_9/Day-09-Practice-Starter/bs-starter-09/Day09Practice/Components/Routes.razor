@@ -1,16 +1,4 @@
-@* PRACTICE 1 — this file is one of the three pieces of the fallback route.
-   You might expect a <NotFound> template here. There isn't one, and adding one would do
-   nothing: in a Blazor Web App it compiles and never fires, on either render pass. It is dead
-   code kept for backward compatibility only.
-
-   TODO (Practice 1): add NotFoundPage="typeof(Pages.NotFound)" to the <Router> below.
-
-   The middleware you add in Program.cs fixes the SERVER pass — it re-runs the pipeline against
-   /not-found and keeps the 404 status. But the Blazor circuit then connects and re-runs this
-   router against the URL the user actually typed (/nonexistent), which still matches nothing.
-   NotFoundPage names the page it renders. Leave it out and Blazor's bare "Not found" overwrites
-   your styled page a moment after it appears — you will see it flash, then vanish. *@
-<Router AppAssembly="typeof(Program).Assembly">
+<Router AppAssembly="typeof(Program).Assembly" NotFoundPage="typeof(Pages.NotFound)">
     <Found Context="routeData">
         <RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)" />
         <FocusOnNavigate RouteData="routeData" Selector="h1" />
