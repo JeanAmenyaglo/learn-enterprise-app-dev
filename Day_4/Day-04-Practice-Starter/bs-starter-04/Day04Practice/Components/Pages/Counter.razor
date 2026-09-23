@@ -1,5 +1,6 @@
 @page "/counter"
 @inherits FluxorComponent
+@using Day04Practice.Features.Counter.Store
 @inject IState<Day04Practice.Features.Counter.Store.CounterState> CounterState
 @inject IDispatcher Dispatcher
 
@@ -15,8 +16,12 @@
     <button class="btn btn-warning" @onclick="Reset">Reset</button>
 </div>
 
-@* TODO: Add a conditional message when count is zero *@
-@* Hint: @if (CounterState.Value.Count == 0) { ... alert ... } *@
+@if (CounterState.Value.Count == 0)
+{
+    <div class="alert alert-info mt-3">
+        Counter is at zero. Try incrementing!
+    </div>
+}
 
 @code {
     private void Increment()
@@ -26,11 +31,11 @@
 
     private void Decrement()
     {
-        // TODO: Dispatch DecrementCounterAction
+        Dispatcher.Dispatch(new DecrementCounterAction());
     }
 
     private void Reset()
     {
-        // TODO: Dispatch ResetCounterAction
+        Dispatcher.Dispatch(new ResetCounterAction());
     }
 }

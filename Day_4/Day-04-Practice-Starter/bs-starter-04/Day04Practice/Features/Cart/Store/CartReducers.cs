@@ -27,11 +27,25 @@ public static class CartReducers
         return state with { Items = [.. state.Items, newItem] };
     }
 
-    // TODO: Add ReduceRemoveFromCartAction
-    // 1. Filter out the item by ProductId
-    // 2. Return state with { Items = updatedItems };
+    [ReducerMethod]
+    public static CartState ReduceRemoveFromCartAction(
+     CartState state,
+     RemoveFromCartAction action)
+    {
+        var updatedItems = state.Items.Where(i => i.ProductId != action.ProductId).ToList();
+        return state with { Items = updatedItems };
+    }
 
-    // TODO: Add ReduceUpdateQuantityAction
-    // 1. Map over items, update Quantity for matching ProductId
-    // 2. Return state with { Items = updatedItems };
+    [ReducerMethod]
+    public static CartState ReduceUpdateQuantityAction(
+        CartState state,
+        UpdateQuantityAction action)
+    {
+        var updatedItems = state.Items
+            .Select(i => i.ProductId == action.ProductId
+                ? i with { Quantity = action.NewQuantity }
+                : i)
+            .ToList();
+        return state with { Items = updatedItems };
+    }
 }

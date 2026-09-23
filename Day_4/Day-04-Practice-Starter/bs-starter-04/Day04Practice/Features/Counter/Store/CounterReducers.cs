@@ -11,10 +11,19 @@ public static class CounterReducers
     {
         return state with { Count = state.Count + 1 };
     }
+    [ReducerMethod]
+    public static CounterState ReduceDecrementCounterAction(
+        CounterState state,
+        DecrementCounterAction action)
+    {
+        return state with { Count = state.Count - 1 };
+    }
 
-    // TODO: Add ReduceDecrementCounterAction
-    // Pattern: return state with { Count = state.Count - 1 };
-
-    // TODO: Add ReduceResetCounterAction
-    // Pattern: return state with { Count = 0 };
+    [ReducerMethod]
+    public static CounterState ReduceResetCounterAction(
+        CounterState state,
+        ResetCounterAction action)
+    {
+        return state with { Count = 0 };
+    }
 }

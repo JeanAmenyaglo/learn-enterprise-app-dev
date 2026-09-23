@@ -1,7 +1,8 @@
 @page "/todo"
-@* TODO: Add @inherits FluxorComponent *@
-@* TODO: Add @inject IState<Day04Practice.Features.Todo.Store.TodoState> TodoState *@
-@* TODO: Add @inject IDispatcher Dispatcher *@
+@inherits FluxorComponent
+@using Day04Practice.Features.Todo.Store
+@inject IState<Day04Practice.Features.Todo.Store.TodoState> TodoState
+@inject IDispatcher Dispatcher
 
 <PageTitle>Practice 2: Todo List</PageTitle>
 
@@ -20,17 +21,13 @@
     </div>
 </div>
 
-@* TODO: Replace the placeholder below with Fluxor state, and show an empty-state message when the list is empty (same @if pattern as Counter in Practice 1) *@
-@* Use: TodoState.Value.Items *@
+@if (TodoState.Value.Items.Count == 0)
+{
+    <div class="alert alert-info">
+        No todos yet. Add one above.
+    </div>
+}
 
-<div class="alert alert-info">
-    <strong>Instructions:</strong> Wire this component to the Fluxor store.
-    The UI is ready -- you need to add the Fluxor directives above, define actions,
-    implement reducers, create the feature class, and wire the @@code methods below.
-</div>
-
-@* When wired, render the todo list like this: *@
-@*
 <ul class="list-group">
     @foreach (var item in TodoState.Value.Items)
     {
@@ -49,7 +46,6 @@
         </li>
     }
 </ul>
-*@
 
 @code {
     private string newTodoTitle = string.Empty;
@@ -58,19 +54,19 @@
     {
         if (!string.IsNullOrWhiteSpace(newTodoTitle))
         {
-            // TODO: Dispatcher.Dispatch(new AddTodoAction(newTodoTitle));
+            Dispatcher.Dispatch(new AddTodoAction(newTodoTitle));
             newTodoTitle = string.Empty;
         }
     }
 
     private void RemoveTodo(int id)
     {
-        // TODO: Dispatcher.Dispatch(new RemoveTodoAction(id));
+        Dispatcher.Dispatch(new RemoveTodoAction(id));
     }
 
     private void ToggleTodo(int id)
     {
-        // TODO: Dispatcher.Dispatch(new ToggleTodoAction(id));
+        Dispatcher.Dispatch(new ToggleTodoAction(id));
     }
 
     private void HandleKeyDown(KeyboardEventArgs e)

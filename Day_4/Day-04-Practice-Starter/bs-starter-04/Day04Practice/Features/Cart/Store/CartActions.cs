@@ -1,7 +1,5 @@
 namespace Day04Practice.Features.Cart.Store;
 
 public record AddToCartAction(int ProductId, string Name, decimal Price);
-
-// TODO: Add RemoveFromCartAction(int ProductId)
-
-// TODO: Add UpdateQuantityAction(int ProductId, int NewQuantity)
+public record RemoveFromCartAction(int ProductId);
+public record UpdateQuantityAction(int ProductId, int NewQuantity);
